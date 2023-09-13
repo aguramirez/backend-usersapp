@@ -20,6 +20,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import static com.agustin.backend.usersapp.backendusersapp.auth.TokenJwtConfig.*;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -60,10 +61,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
         String username = ((org.springframework.security.core.userdetails.User)authResult.getPrincipal()).getUsername();
-        String originalInput = "algun_token_con_alguna_frase_secreta." + username;
+        String originalInput = SECRET_KEY + username;
         String token = Base64.getEncoder().encodeToString(originalInput.getBytes());
 
-        response.addHeader("Authorization", "Bearer "+token);
+        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN +token);
 
         Map<String, Object> body = new HashMap<>();
         body.put("token", token);
