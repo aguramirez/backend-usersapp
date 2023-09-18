@@ -2,6 +2,7 @@ package com.agustin.backend.usersapp.backendusersapp.auth.filters;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,18 +62,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
-        String username = ((org.springframework.security.core.userdetails.User)authResult.getPrincipal()).getUsername();
-        String originalInput = SECRET_KEY +"."+ username;
-        String token = Base64.getEncoder().encodeToString(originalInput.getBytes());
+        String username = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal())
+                .getUsername();
 
-        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN +token);
+        String token = Jwts.builder()
+                .setSubject(username)
+                .signWith(SECRET_KEY)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .compact();
+
+        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
 
         Map<String, Object> body = new HashMap<>();
         body.put("token", token);
         body.put("message", String.format("Hola %s has iniciado sesion con exito!", username));
         body.put("username", username);
 
-        response.getWriter().write(new ObjectMapper().writeValueAsString(body)); //convierte el map en un json
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body)); // convierte el map en un json
         response.setStatus(200);
         response.setContentType("application/json");
     }
