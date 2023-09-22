@@ -1,10 +1,13 @@
 package com.agustin.backend.usersapp.backendusersapp.models.entities;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,6 +34,9 @@ public class User {
     @Email
     @Column(unique = true)
     private String email;
+
+    @ManyToMany
+    private List<Role> roles;
 
     public Long getId() {
         return id;
@@ -63,7 +69,14 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+    
     
 }
