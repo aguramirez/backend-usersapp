@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agustin.backend.usersapp.backendusersapp.models.UserRequest;
+import com.agustin.backend.usersapp.backendusersapp.models.dto.UserDto;
 import com.agustin.backend.usersapp.backendusersapp.models.entities.User;
 import com.agustin.backend.usersapp.backendusersapp.services.UserService;
 
@@ -34,13 +35,13 @@ public class UserController {
     private UserService service;
 
     @GetMapping
-    public List<User> list(){
+    public List<UserDto> list(){
         return service.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Long id){
-        Optional<User> userOptional = service.findById(id);
+        Optional<UserDto> userOptional = service.findById(id);
 
         if(userOptional.isPresent()){
             return ResponseEntity.ok(userOptional.orElseThrow());
@@ -62,7 +63,7 @@ public class UserController {
         if(result.hasErrors()){
             return validation(result);
         }
-        Optional<User> o = service.update(user, id);
+        Optional<UserDto> o = service.update(user, id);
         if(o.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
         }
@@ -85,7 +86,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable Long id){
-        Optional<User> o = service.findById(id);
+        Optional<UserDto> o = service.findById(id);
         if(o.isPresent()){
             service.remove(id);
             return ResponseEntity.noContent().build(); //204

@@ -4,17 +4,18 @@ import java.util.List;
 import java.util.Optional;
 
 import com.agustin.backend.usersapp.backendusersapp.models.UserRequest;
+import com.agustin.backend.usersapp.backendusersapp.models.dto.UserDto;
 import com.agustin.backend.usersapp.backendusersapp.models.entities.User;
 
 public interface UserService {
     
-    List<User> findAll();
+    List<UserDto> findAll();
 
-    Optional<User> findById(Long id);
+    Optional<UserDto> findById(Long id);
 
-    User save(User user);
+    UserDto save(User user);
 
-    Optional<User> update(UserRequest user, Long id);
+    Optional<UserDto> update(UserRequest user, Long id);
 
     void remove(Long id);
 }
