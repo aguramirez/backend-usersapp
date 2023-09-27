@@ -6,7 +6,6 @@ import com.agustin.backend.usersapp.backendusersapp.models.entities.User;
 public class DtoMapperUser {
     
     //Patron de disenio Builder
-    private static DtoMapperUser mapper;
     
     private User user;
 
@@ -14,18 +13,17 @@ public class DtoMapperUser {
     }
 
     public static DtoMapperUser builder(){
-        mapper = new DtoMapperUser();
-        return mapper;
+        return new DtoMapperUser();
     }
 
     public DtoMapperUser setUser(User user) {
         this.user = user;
-        return mapper;
+        return this;
     }
 
     public UserDto build(){
         if(user == null){
-            throw new RuntimeException("Debe pasar el entity user!");
+            throw new RuntimeException("Debe pasar un entity user!");
         }
         return new UserDto(this.user.getId(), this.user.getUsername(), this.user.getEmail());
     }
