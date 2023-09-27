@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import static com.agustin.backend.usersapp.backendusersapp.auth.TokenJwtConfig.*;
+
+import com.agustin.backend.usersapp.backendusersapp.auth.SimpleGrantedAuthorityJsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
@@ -45,24 +47,25 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
 
         try {
             Claims claims = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)//aca se valida
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+                    .setSigningKey(SECRET_KEY)// aca se valida
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-            Object authoritiesClaims = claims.get("authorities"); 
+            Object authoritiesClaims = claims.get("authorities");
 
             String username = claims.getSubject();
 
             Collection<? extends GrantedAuthority> authorities = Arrays
-                .asList(new ObjectMapper()
-                    .readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class));
+                    .asList(new ObjectMapper()
+                            .addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityJsonCreator.class)
+                            .readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class));
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null,
                     authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
-        } catch(JwtException e) {
+        } catch (JwtException e) {
             Map<String, String> body = new HashMap<>();
             body.put("error", e.getMessage());
             body.put("message", "El token JWT no es valido!");
