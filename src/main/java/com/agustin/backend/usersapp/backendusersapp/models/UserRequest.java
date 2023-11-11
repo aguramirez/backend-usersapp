@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-public class UserRequest {
+public class UserRequest implements IUser{
     
     @NotBlank
     @Size(min = 4, max = 15)
@@ -17,6 +17,7 @@ public class UserRequest {
 
     private boolean admin;
 
+    @Override
     public boolean isAdmin() {
         return admin;
     }
